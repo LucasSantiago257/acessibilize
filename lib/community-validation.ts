@@ -2,7 +2,9 @@ import { z } from 'zod';
 
 export const featureKeys = ['ramp', 'stepFree', 'accessibleToilet', 'reservedParking', 'tactilePaving', 'braille', 'audioDescription', 'visualGuidance', 'libras', 'captions', 'visualAlerts', 'hearingLoop'] as const;
 const status = z.enum(['present', 'partial', 'absent', 'unknown']);
-const features = z.record(z.enum(featureKeys), status).refine(v => Object.values(v).some(s => s !== 'unknown'), 'Informe ao menos um recurso encontrado, parcial ou ausente.');
+const features = z.record(z.enum(featureKeys), status).default({});
+const rating = z.number().int().min(1).max(5).nullable().optional();
+const ratings = z.object({ physical: rating, visual: rating, hearing: rating }).strict().default({});
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(v => {
   const parsed = new Date(v + 'T12:00:00Z');
   return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === v && v >= '2000-01-01' && v <= new Date().toISOString().slice(0, 10);
@@ -14,8 +16,9 @@ export const reportSchema = z.object({
   authorName: z.string().trim().min(2).max(50),
   visitedAt: date,
   features,
+  ratings,
   observation: z.string().trim().max(1500),
-}).strict();
+}).strict().refine(v => Object.values(v.features).some(s => s !== 'unknown') || Object.values(v.ratings).some(n => n != null), 'Dê uma nota ou informe ao menos um recurso observado.');
 
 export const placeSchema = z.object({
   id: z.string().uuid(),

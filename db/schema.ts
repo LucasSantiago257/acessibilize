@@ -1,4 +1,4 @@
-import { sqliteTable, text, real, index } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, real, integer, index } from 'drizzle-orm/sqlite-core';
 
 export const communityPlaces = sqliteTable('community_places', {
   id: text('id').primaryKey(),
@@ -21,4 +21,7 @@ export const accessibilityReports = sqliteTable('accessibility_reports', {
   createdAt: text('created_at').notNull(),
   features: text('features').notNull(),
   observation: text('observation').notNull(),
+  physicalRating: integer('physical_rating'),
+  visualRating: integer('visual_rating'),
+  hearingRating: integer('hearing_rating'),
 }, table => [index('reports_place_created_idx').on(table.placeId, table.createdAt), index('reports_author_created_idx').on(table.authorId, table.createdAt)]);

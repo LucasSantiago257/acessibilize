@@ -8,13 +8,19 @@ Use o site hospedado. Seu acesso continua privado, conforme a configuração ant
 
 1. Busque um lugar e abra seus detalhes.
 2. Clique em **Adicionar registro** e informe nome/apelido público e data da visita.
-3. Marque cada recurso como Encontrado, Parcial/com limitações, Não encontrado ou Não observei. Há 12 recursos físicos, visuais e auditivos.
+3. Dê de 1 a 5 estrelas para acessibilidade física, visual e auditiva. Cada categoria é opcional; use “Não avaliar” quando não puder dar uma nota. Marque os recursos observados, se desejar. É preciso fornecer ao menos uma nota ou um recurso.
 4. Deixe observações, confira a autorização de compartilhamento e publique.
-5. Veja o registro no histórico e o resumo atualizado. A visita mais recente de cada recurso define seu resumo; visitas anteriores e relatos diferentes continuam visíveis.
+5. Veja as médias por categoria, suas quantidades de avaliações e o histórico. Todas as notas válidas têm o mesmo peso, independentemente da data. O resumo de cada recurso também reúne todos os relatos e mostra divergências e contagens.
 6. Use **Adicionar local** para publicar um espaço novo. Depois abra-o e registre os recursos observados. O cadastro aparece em “Locais da comunidade” e em “Todos os locais reais”.
 7. Abra o site em outra sessão autorizada: os registros vêm do banco, sem depender do armazenamento do primeiro navegador.
 
-Os registros são observações pessoais, não certificações. Dados originais do OpenStreetMap ficam separados em uma seção expansível. Exemplos fictícios não recebem registros compartilhados. Os filtros consideram os recursos relatados, preservando informações da fonte quando não há observação comunitária relevante. Relatos não observados não apagam informações conhecidas.
+Os registros são observações pessoais, não certificações. Dados originais do OpenStreetMap ficam separados em uma seção expansível. Exemplos fictícios não recebem registros compartilhados. Os filtros consideram recursos relatados; notas por categoria não são usadas para presumir a presença de um recurso específico.
+
+## Como as médias funcionam
+
+Cada categoria possui sua média aritmética independente: soma das notas dividida pela quantidade de notas daquela categoria. Por exemplo, física 5 e 1 resulta em 3,0; uma visita que avalia somente a visual não entra no denominador da física. O banco calcula a média sobre todos os registros avaliados, sem escolher apenas o mais recente. Exibimos uma casa decimal e o total de avaliações (registros, não pessoas distintas).
+
+Categorias sem nota são armazenadas como NULL, nunca como zero. Registros anteriores à introdução de estrelas permanecem sem nota e não alteram as médias. Sem avaliações, a interface mostra “Sem avaliações”. As notas individuais aparecem no histórico. Reenvios do mesmo registro não criam votos duplicados; visitas diferentes podem receber avaliações próprias.
 
 ## Persistência e acesso
 
@@ -36,16 +42,18 @@ Node.js 22.13+; Vinext/Vite, Cloudflare D1, Drizzle; interface HTML/CSS/JavaScri
 npm run install:ci
 npm run build
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_heavy_lady_ursula.sql
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0001_clear_roughhouse.sql
 npm run dev
 ```
 
-Aplique a migração uma única vez no banco local. A prévia abre na porta 5173; seu login local é simulado pelo starter, não pela conta real. Migrações publicadas são aplicadas pelo fluxo de hospedagem. Abrir `public/index.html` diretamente permite inspecionar a interface e base; as contribuições exigem o servidor.
+Aplique cada migração uma única vez, na ordem, no banco local. Se a primeira já foi aplicada, execute apenas a segunda. A prévia abre na porta 5173; seu login local é simulado pelo starter, não pela conta real. Migrações publicadas são aplicadas pelo fluxo de hospedagem. Abrir `public/index.html` diretamente permite inspecionar a interface e base; as contribuições exigem o servidor.
 
 ```text
 node scripts/test-community-api.mjs
+node scripts/test-ratings.mjs
 ```
 
-O teste grava somente no banco local e valida reenvio sem duplicação, leitura independente, autenticação, origem, recursos inválidos e local inexistente. Os registros de teste não são publicados.
+Os testes gravam somente no banco local. Validam a API, médias separadas por categoria, notas ausentes, registros antigos, valores inválidos, reenvios e agregação de relatos divergentes. Os registros de teste não são publicados.
 
 ## Arquivos principais
 

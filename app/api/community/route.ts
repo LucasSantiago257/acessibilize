@@ -10,14 +10,16 @@ const json = (value: unknown, status = 200) => new Response(JSON.stringify(value
 export async function GET(request: Request) {
   try {
     const userId = request.headers.get('oai-authenticated-user-id');
-    const [places, reports] = await env.DB!.batch<Record<string, unknown>>([
+    const [places, reports, ratings] = await env.DB!.batch<Record<string, unknown>>([
       env.DB!.prepare('SELECT id, name, category, area, address, latitude, longitude, created_at FROM community_places ORDER BY created_at DESC'),
-      env.DB!.prepare('SELECT id, place_id, author_name, visited_at, created_at, features, observation FROM accessibility_reports ORDER BY visited_at DESC, created_at DESC, id DESC'),
+      env.DB!.prepare('SELECT id, place_id, author_name, visited_at, created_at, features, observation, physical_rating, visual_rating, hearing_rating FROM accessibility_reports ORDER BY visited_at DESC, created_at DESC, id DESC'),
+      env.DB!.prepare('SELECT place_id, AVG(physical_rating) AS physical_average, COUNT(physical_rating) AS physical_count, AVG(visual_rating) AS visual_average, COUNT(visual_rating) AS visual_count, AVG(hearing_rating) AS hearing_average, COUNT(hearing_rating) AS hearing_count FROM accessibility_reports GROUP BY place_id'),
     ]);
     return json({
       signedIn: Boolean(userId),
       places: places.results.map((p: Record<string, unknown>) => ({ id: p.id, name: p.name, category: p.category, area: p.area, address: p.address, lat: p.latitude, lng: p.longitude, createdAt: p.created_at, source: 'community', physical: 0, visual: 0, hearing: 0, resources: { physical: [], visual: [], hearing: [] }, art: ({ 'Cultura e lazer': 'culture', 'Parques e praças': 'park', Compras: 'shopping', Serviços: 'service', Alimentação: 'food' } as Record<string, string>)[String(p.category)] })),
-      reports: reports.results.map((r: Record<string, unknown>) => ({ id: r.id, placeId: r.place_id, authorName: r.author_name, visitedAt: r.visited_at, createdAt: r.created_at, features: JSON.parse(String(r.features)), observation: r.observation })),
+      reports: reports.results.map((r: Record<string, unknown>) => ({ id: r.id, placeId: r.place_id, authorName: r.author_name, visitedAt: r.visited_at, createdAt: r.created_at, features: JSON.parse(String(r.features)), observation: r.observation, ratings: { physical: r.physical_rating, visual: r.visual_rating, hearing: r.hearing_rating } })),
+      ratingsByPlace: Object.fromEntries(ratings.results.map(r => [r.place_id, Object.fromEntries(['physical', 'visual', 'hearing'].map(k => [k, { average: r[k + '_average'], count: r[k + '_count'] }]))])),
     });
   } catch (error) {
     console.error('community_read_failed', error instanceof Error ? error.message : 'unknown');
@@ -55,7 +57,7 @@ export async function POST(request: Request) {
       if (!parsed.success) return json({ error: parsed.error.issues[0].message }, 400);
       const r = parsed.data;
       if (!knownPlaces.has(r.placeId) && !await env.DB!.prepare('SELECT id FROM community_places WHERE id = ?').bind(r.placeId).first()) return json({ error: 'Local não encontrado na base real. Os exemplos fictícios não recebem registros compartilhados.' }, 404);
-      const result = await env.DB!.prepare('INSERT INTO accessibility_reports (id, place_id, author_id, author_name, visited_at, created_at, features, observation) SELECT ?, ?, ?, ?, ?, ?, ?, ? WHERE (SELECT COUNT(*) FROM accessibility_reports WHERE author_id = ? AND created_at >= ?) < 30 ON CONFLICT(id) DO NOTHING').bind(r.id, r.placeId, authorId, r.authorName, r.visitedAt, now, JSON.stringify(r.features), r.observation, authorId, since).run();
+      const result = await env.DB!.prepare('INSERT INTO accessibility_reports (id, place_id, author_id, author_name, visited_at, created_at, features, observation, physical_rating, visual_rating, hearing_rating) SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE (SELECT COUNT(*) FROM accessibility_reports WHERE author_id = ? AND created_at >= ?) < 30 ON CONFLICT(id) DO NOTHING').bind(r.id, r.placeId, authorId, r.authorName, r.visitedAt, now, JSON.stringify(r.features), r.observation, r.ratings.physical ?? null, r.ratings.visual ?? null, r.ratings.hearing ?? null, authorId, since).run();
       if (!result.meta.changes) {
         const existing = await env.DB!.prepare('SELECT id FROM accessibility_reports WHERE id = ? AND author_id = ?').bind(r.id, authorId).first();
         if (!existing) return json({ error: 'Limite de 30 registros por hora. Tente mais tarde.' }, 429);
