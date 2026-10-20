@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#234c3d"><meta name="description" content="Explore a cidade com mais autonomia. Um protótipo colaborativo de mapa de acessibilidade em Salvador.">
+  <title>Acesso Livre · Uma cidade para todo mundo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#results">Pular para os locais</a>
+  <header class="header">
+    <a class="brand" href="./" aria-label="Acesso Livre, início"><span class="brand-icon" data-icon="compass"></span><span>acesso<span class="brand-light">livre</span><small>A CIDADE É DE TODO MUNDO</small></span></a>
+    <nav aria-label="Navegação principal"><button class="nav-link active" id="exploreNav">Explorar o mapa</button><button class="nav-link" id="aboutNav">Sobre o projeto</button></nav>
+    <div class="header-actions"><button class="icon-button" id="accessibilityBtn" aria-label="Opções de leitura" title="Opções de leitura"><span data-icon="accessibility"></span></button><button class="primary" id="addBtn"><span data-icon="plus"></span>Adicionar local</button></div>
+  </header>
+  <main class="workspace">
+    <aside class="sidebar" aria-label="Busca e locais">
+      <div class="intro"><span class="eyebrow"><i></i> MAIS AUTONOMIA, NOVOS CAMINHOS</span><h1>A cidade também<br>é <span>seu lugar.</span></h1><p>Encontre espaços acessíveis para você.<br>Explore, descubra e compartilhe.</p></div>
+      <div class="search-wrap"><span data-icon="search"></span><input id="search" type="search" placeholder="Busque um lugar ou bairro" aria-label="Buscar por nome ou bairro"><kbd>/</kbd></div>
+      <div class="location-row"><span data-icon="pin"></span><span>Salvador, BA</span><span class="demo-label">Demonstração</span></div>
+      <section class="filters" aria-label="Filtros de acessibilidade"><div class="section-heading"><h2>O que faz a diferença para você?</h2><button id="clearFilters" class="text-button">Limpar</button></div><div class="profile-filters"><button class="profile" data-profile="physical" aria-pressed="false"><span data-icon="wheelchair"></span>Física</button><button class="profile" data-profile="visual" aria-pressed="false"><span data-icon="eye"></span>Visual</button><button class="profile" data-profile="hearing" aria-pressed="false"><span data-icon="ear"></span>Auditiva</button></div><p class="filter-hint">Combine os filtros conforme suas necessidades.</p><label class="category-label" for="category">Tipo de lugar</label><select id="category"><option value="">Todos os lugares</option><option>Cultura e lazer</option><option>Parques e praças</option><option>Compras</option><option>Serviços</option><option>Alimentação</option></select></section>
+      <div class="results-heading"><h2 id="resultCount" aria-live="polite">Locais para descobrir</h2><button class="icon-button" id="favoritesBtn" aria-pressed="false" aria-label="Mostrar apenas favoritos" title="Apenas favoritos"><span data-icon="heart"></span></button></div>
+      <div id="results" class="results" tabindex="-1"></div>
+      <footer class="sidebar-footer"><span data-icon="heart"></span>Uma cidade melhor começa com cada um de nós.</footer>
+    </aside>
+    <section class="map-section" aria-label="Mapa dos locais em Salvador">
+      <div id="map" aria-label="Mapa interativo de Salvador"></div>
+      <div id="mapError" class="map-error" hidden>O mapa precisa de internet para carregar. Você pode continuar explorando os locais na lista.</div>
+      <div class="map-top"><div class="map-caption"><span class="live-dot"></span>Salvador, Bahia <span class="divider">|</span><span id="mapCount">8 locais no mapa</span></div><button class="map-button" id="locateBtn"><span data-icon="locate"></span><span>Minha localização</span></button></div>
+      <div class="map-intro"><div class="intro-symbol" data-icon="sparkles"></div><span>MENOS BARREIRAS. MAIS POSSIBILIDADES.</span><h2>Seu próximo destino<br>começa com confiança.</h2><p>Conheça os recursos de cada espaço<br>antes de sair de casa.</p><button id="howBtn">Como funciona <span data-icon="arrow"></span></button><div class="decorative-path" aria-hidden="true"><i></i><b data-icon="pin"></b><i></i></div></div>
+      <div class="map-bottom"><div class="legend"><strong>Acessibilidade</strong><span><i class="green"></i>Recursos disponíveis</span><span><i class="amber"></i>Recursos parciais</span><span><i class="gray"></i>Sem informação</span></div><div class="demo-note"><span data-icon="info"></span>Protótipo acadêmico · recursos dos locais são fictícios.</div></div>
+      <div class="mobile-toggle"><button id="toggleMap" class="primary"><span data-icon="map"></span>Ver mapa</button></div>
+    </section>
+  </main>
+  <dialog id="modal"><div class="modal-top"><span class="eyebrow" id="modalEyebrow">ACESSO LIVRE</span><button class="icon-button" id="closeModal" aria-label="Fechar janela"><span data-icon="close"></span></button></div><div id="modalContent"></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin></script>
+  <script src="app.js"></script>
+</body></html>
