@@ -1,3 +1,15 @@
 osm-raw.json
 upgrade.mjs
 finalize.mjs
+
+node_modules/
+dist/
+.vinext/
+.wrangler/
+.sites-runtime/
+.env*
+
+
+.next/
+*.tsbuildinfo
+

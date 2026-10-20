@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const root=process.argv[2]||'http://127.0.0.1:5173';
+if(!['127.0.0.1','localhost'].includes(new URL(root).hostname))throw Error('Este teste grava somente no banco local.');
+const url=root+'/api/community';
+const login=await fetch(root+'/signin-with-chatgpt?return_to=%2F',{redirect:'manual'});
+const cookie=login.headers.getSetCookie().map(c=>c.split(';')[0]).join('; ');
+assert(cookie,'O teste requer a prévia dev com autenticação simulada.');
+const id=crypto.randomUUID();
+const report={type:'report',data:{id,placeId:JSON.parse(fs.readFileSync('data/base-ids.json'))[0],authorName:'Teste automatizado local',visitedAt:new Date().toISOString().slice(0,10),features:{ramp:'partial'},observation:'Registro exclusivo do banco local para validar reenvios.'}};
+const headers={'Content-Type':'application/json',Origin:root,Cookie:cookie};
+for(let n=0;n<2;n++){const r=await fetch(url,{method:'POST',headers,body:JSON.stringify(report)});assert.equal(r.status,201,await r.text());}
+const json=await(await fetch(url)).json();
+assert.equal(json.reports.filter(r=>r.id===id).length,1,'O reenvio não pode duplicar o registro.');
+assert(!JSON.stringify(json).includes('author_id'),'A identidade privada não pode ser publicada.');
+const bad=await fetch(url,{method:'POST',headers,body:JSON.stringify({...report,data:{...report.data,id:crypto.randomUUID(),features:{fake:'present'}}})});
+assert.equal(bad.status,400);
+const cross=await fetch(url,{method:'POST',headers:{...headers,Origin:'https://outro-site.example'},body:JSON.stringify(report)});
+assert.equal(cross.status,403);
+const unknown=await fetch(url,{method:'POST',headers,body:JSON.stringify({...report,data:{...report.data,id:crypto.randomUUID(),placeId:'missing-place'}})});
+assert.equal(unknown.status,404);
+const anonymous=await fetch(url,{method:'POST',headers:{...headers,Cookie:''},body:JSON.stringify(report)});
+assert.equal(anonymous.status,401);
+console.log('API local: gravação, leitura independente, idempotência, recurso inválido (400), origem externa (403), local inexistente (404) e login obrigatório (401) conferidos.');
