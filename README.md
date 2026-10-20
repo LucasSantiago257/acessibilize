@@ -1,36 +1,39 @@
-# Acesso Livre
+# Acessibilize
 
-Protótipo acadêmico de mapa colaborativo de acessibilidade em Salvador, BA. Feito com HTML, CSS e JavaScript, sem instalação de dependências e sem chave de API. Mapa interativo com Leaflet 1.9.4 e OpenStreetMap.
+Protótipo acadêmico com **761 locais reais na região de Salvador**, importados do OpenStreetMap, mais oito exemplos fictícios separados para apresentação.
 
-## Como apresentar
+## Abrir e apresentar
 
-Abra `dist/index.html` em um navegador com internet, ou sirva a pasta `dist` por um servidor HTTP. O site publicado requer acesso à conta proprietária. Para uma apresentação offline, a lista e os filtros funcionam, mas fontes externas e mapa precisam de conexão; use a fonte alternativa do sistema quando offline.
+Extraia o ZIP e abra `dist/index.html` com internet. Não exige instalação nem chave de API. A hospedagem privada exige a conta proprietária.
 
-1. Apresente a ideia: ajudar pessoas com deficiência física, visual e auditiva a conhecer recursos de um espaço antes da visita.
-2. Busque um lugar ou bairro, por exemplo “Barra”.
-3. Combine os filtros: um local só aparece se informar recursos disponíveis em todas as categorias selecionadas.
-4. Abra um local na lista ou pelo marcador para ver detalhes. Verde indica recursos disponíveis, amarelo indica recursos parciais e cinza indica ausência de informação; há descrições textuais equivalentes.
-5. Salve um favorito e use o coração acima da lista para mostrar apenas favoritos.
-6. Demonstre o cadastro com coordenadas em Salvador; o novo local é salvo apenas neste navegador.
-7. Abra as opções de leitura para aumentar textos e contraste.
+1. A base padrão é “Locais reais · OpenStreetMap”. O mapa agrupa marcadores próximos; amplie ou clique em um grupo para explorar.
+2. Busque nome ou bairro e filtre por categoria. A lista mostra 30 locais por vez; “Mostrar mais” carrega os próximos.
+3. Combine filtros físicos, visuais e auditivos. Aparecem registros com recursos disponíveis ou parciais nas categorias selecionadas. Acesso explicitamente indisponível é excluído do filtro físico.
+4. Abra um local para ver os dados exatos da fonte, data de importação e link para o registro original.
+5. Para demonstrar as três categorias, selecione “Exemplos fictícios · apresentação” em “Origem dos dados”.
+6. Salve favoritos e cadastre um local: ele fica neste navegador e aparece em “Meus cadastros”.
+7. Experimente as opções de leitura e a alternância entre mapa e lista no celular.
 
-## Limites do protótipo
+## Base de dados e limites
 
-Os oito espaços de exemplo existem, mas seus recursos de acessibilidade são **fictícios**, sem vistoria ou certificação. Não devem orientar uma visita real. Novas contribuições são declarações não verificadas e ficam em armazenamento local (`localStorage`), assim como favoritos e preferências de leitura. Nenhum cadastro é compartilhado entre usuários. O navegador pode bloquear ou apagar o armazenamento local.
+Há **346 registros com alguma informação explícita de acessibilidade**, incluindo acesso limitado ou indisponível. Isso não representa 346 locais acessíveis ou vistoriados. Os demais aguardam informações. Ausência de dados não significa ausência de acessibilidade. Não acrescentamos recursos presumidos: acesso para cadeira de rodas não confirma sanitários adaptados, braille ou Libras.
 
-O botão de trajeto abre o Google Maps e não garante rota acessível. A localização é solicitada apenas quando o botão é acionado e não é armazenada pelo aplicativo. O mapa, bibliotecas e fontes carregam de serviços externos. Não há login, backend, avaliações reais ou mecanismo de moderação nesta versão.
+Os oito exemplos de apresentação possuem recursos **fictícios** e ficam em uma base separada. Nenhum registro é certificado pelo Acessibilize. Confirme as condições antes de uma visita. O trajeto abre o Google Maps e não garante rota acessível.
 
-## Arquivos
+Coordenadas de áreas podem indicar o centro do elemento, sem indicar a entrada. Endereços ou bairros ausentes na fonte são identificados. A consulta abrange uma caixa geográfica da região de Salvador e pode incluir arredores. Há até 160 locais por categoria; não é um inventário completo.
 
-- `dist/index.html`: estrutura semântica em português.
-- `dist/style.css`: interface responsiva, foco visível, opções de leitura e movimento reduzido.
-- `dist/app.js`: dados demonstrativos, mapa, busca sem distinção de acentos, filtros, cadastros e favoritos locais.
-- `.openai/hosting.json`: identificação e configuração do site hospedado.
+`BASE-DE-DADOS.md` documenta contagens e proveniência. `import-osm.mjs` reproduz a importação com Node.js 22+ e conexão ao Overpass. `dist/places.js` contém o recorte sob **ODbL 1.0**. Dados © OpenStreetMap contributors: https://www.openstreetmap.org/copyright.
 
-## Evoluções possíveis
+Cadastros, favoritos e preferências ficam em armazenamento local e não são compartilhados. Localização só é solicitada ao clicar no botão e não é armazenada. Mapa, bibliotecas e fontes usam serviços externos. A base vem empacotada: a busca não precisa consultar novamente a API.
 
-Cadastro compartilhado com moderação; levantamento real com participação de pessoas com deficiência; comprovação por recurso e data de vistoria; validação formal com leitores de tela; planejamento de rotas com dados de calçadas e travessias.
+## Tecnologia
 
-## Créditos
+HTML, CSS e JavaScript sem build. Leaflet 1.9.4, Leaflet.markercluster 1.5.3 e OpenStreetMap.
 
-Leaflet: https://leafletjs.com/ · Dados cartográficos: © OpenStreetMap contributors (https://www.openstreetmap.org/copyright). Fontes DM Sans e Manrope via Google Fonts.
+- `dist/index.html`: interface.
+- `dist/style.css`: visual responsivo e opções de leitura.
+- `dist/app.js`: mapa, busca, filtros, favoritos e cadastros.
+- `dist/places.js`: base real com fonte por registro.
+- `import-osm.mjs`: importação reproduzível.
+
+Evoluções: cadastro compartilhado, moderação, vistorias com pessoas com deficiência, atualização por recurso e validação formal com leitores de tela.
