@@ -66,3 +66,8 @@ Os testes gravam somente no banco local. Validam a API, médias separadas por ca
 - `.openai/hosting.json`: identificação e binding do banco.
 
 Evoluções possíveis: moderação, correção de cadastros duplicados, fotos, vistorias com pessoas com deficiência e validação formal com leitores de tela.
+
+## Próxima hospedagem
+
+Veja [DEPLOY.md](DEPLOY.md) para a comparação entre Cloudflare e Vercel, a troca de autenticação e a transferência do banco.
+
