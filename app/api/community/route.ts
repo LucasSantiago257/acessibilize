@@ -10,7 +10,7 @@ const json = (value: unknown, status = 200) => new Response(JSON.stringify(value
 export async function GET(request: Request) {
   try {
     const userId = request.headers.get('oai-authenticated-user-id');
-    const [places, reports] = await env.DB!.batch([
+    const [places, reports] = await env.DB!.batch<Record<string, unknown>>([
       env.DB!.prepare('SELECT id, name, category, area, address, latitude, longitude, created_at FROM community_places ORDER BY created_at DESC'),
       env.DB!.prepare('SELECT id, place_id, author_name, visited_at, created_at, features, observation FROM accessibility_reports ORDER BY visited_at DESC, created_at DESC, id DESC'),
     ]);
