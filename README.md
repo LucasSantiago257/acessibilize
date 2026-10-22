@@ -4,7 +4,7 @@ Mapa colaborativo de acessibilidade com **761 locais reais**, oito exemplos fict
 
 ## Como demonstrar
 
-Use o site hospedado. Seu acesso continua privado, conforme a configuração anterior; apenas visitantes autorizados conseguem abrir. A publicação de locais e registros exige entrar com a conta do ChatGPT. O nome ou apelido exibido é escolhido no formulário; não publicamos o identificador interno da conta.
+Use o site hospedado. Seu acesso continua privado, conforme a configuração anterior; apenas visitantes autorizados conseguem abrir. Para publicar locais ou avaliações, entre pelo botão **Entrar** com uma das três contas preparadas para a turma. As credenciais são entregues separadamente, fora deste repositório. O nome ou apelido público do relato é escolhido no formulário.
 
 1. Busque um lugar e abra seus detalhes.
 2. Clique em **Adicionar registro** e informe nome/apelido público e data da visita.
@@ -23,6 +23,10 @@ Cada categoria possui sua média aritmética independente: soma das notas dividi
 Categorias sem nota são armazenadas como NULL, nunca como zero. Registros anteriores à introdução de estrelas permanecem sem nota e não alteram as médias. Sem avaliações, a interface mostra “Sem avaliações”. As notas individuais aparecem no histórico. Reenvios do mesmo registro não criam votos duplicados; visitas diferentes podem receber avaliações próprias.
 
 ## Persistência e acesso
+
+O login usa usuário e senha, com hashes PBKDF2 e sessões revogáveis no banco, cookie HttpOnly e proteção contra tentativas repetidas. As três contas são cadastradas de forma idempotente na primeira tentativa de login. O arquivo `data/classroom-accounts.json` contém apenas identificadores e hashes, nunca senhas em texto. A validação no servidor protege tanto o cadastro quanto as avaliações. O controle privado da hospedagem é separado do login do aplicativo.
+
+O menu lateral pode ser recolhido pelo botão junto à marca. Os avisos do mapa podem ser fechados e restaurados pelo menu; a preferência dos avisos vale durante a sessão do navegador.
 
 Novos locais e registros são armazenados no **Cloudflare D1**, compartilhado pelos visitantes autorizados. Favoritos, preferências e rascunhos ficam neste navegador. Cadastros da versão antiga continuam identificados como locais do dispositivo e podem ser publicados com confirmação.
 
@@ -43,10 +47,11 @@ npm run install:ci
 npm run build
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_heavy_lady_ursula.sql
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0001_clear_roughhouse.sql
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0002_thin_diamondback.sql
 npm run dev
 ```
 
-Aplique cada migração uma única vez, na ordem, no banco local. Se a primeira já foi aplicada, execute apenas a segunda. A prévia abre na porta 5173; seu login local é simulado pelo starter, não pela conta real. Migrações publicadas são aplicadas pelo fluxo de hospedagem. Abrir `public/index.html` diretamente permite inspecionar a interface e base; as contribuições exigem o servidor.
+Aplique cada migração uma única vez, na ordem, no banco local; execute apenas as que faltarem. A prévia abre na porta 5173 e usa as mesmas contas do aplicativo, em banco separado. Migrações publicadas são aplicadas pelo fluxo de hospedagem. Abrir `public/index.html` diretamente permite inspecionar a interface e base; o login e as contribuições exigem o servidor.
 
 ```text
 node scripts/test-community-api.mjs
@@ -54,6 +59,8 @@ node scripts/test-ratings.mjs
 ```
 
 Os testes gravam somente no banco local. Validam a API, médias separadas por categoria, notas ausentes, registros antigos, valores inválidos, reenvios e agregação de relatos divergentes. Os registros de teste não são publicados.
+
+Forneça `ACESSIBILIZE_TEST_USER` e `ACESSIBILIZE_TEST_PASSWORD` no ambiente antes de executar os testes da comunidade. `node scripts/test-login.mjs` recebe `ACESSIBILIZE_TEST_ACCOUNTS` como JSON de três objetos com `username` e `password` e valida as três contas, erros, cookies, logout e bloqueio de escrita anônima. Não salve essas variáveis no repositório.
 
 ## Arquivos principais
 

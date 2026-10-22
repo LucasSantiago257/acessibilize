@@ -1,0 +1,26 @@
+[
+  {
+    "id": "classroom-ana",
+    "username": "ana",
+    "name": "Ana",
+    "salt": "73de1c46bba1a9a9e55cece6e18105e8",
+    "passwordHash": "a2f01d7c53863e0f30db1d7e14befe4fdbafbf9ea34519e2bfc5b9a1fa41fbbf",
+    "createdAt": "2026-10-22T10:06:58.773Z"
+  },
+  {
+    "id": "classroom-bruno",
+    "username": "bruno",
+    "name": "Bruno",
+    "salt": "d37da300d43d3c45d6b6da5d08342099",
+    "passwordHash": "24c539f999be2105ebede78998892be14623be30841093d5207904ed2558e8be",
+    "createdAt": "2026-10-22T10:06:58.814Z"
+  },
+  {
+    "id": "classroom-carla",
+    "username": "carla",
+    "name": "Carla",
+    "salt": "63164a8daaddb17c7119c9c901f3fb8d",
+    "passwordHash": "7089bb290ac893b307ac21dcf1225467bdb14f852def7abbaf4aab6cf32a8099",
+    "createdAt": "2026-10-22T10:06:58.854Z"
+  }
+]

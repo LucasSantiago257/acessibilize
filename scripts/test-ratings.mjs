@@ -14,7 +14,7 @@ assert(reportSchema.safeParse({...example,ratings:{},features:{ramp:'present'}})
 
 const root=process.argv[2]||'http://127.0.0.1:5173';
 if(!['127.0.0.1','localhost'].includes(new URL(root).hostname))throw Error('Teste permitido somente na prévia local.');
-const login=await fetch(root+'/signin-with-chatgpt?return_to=%2F',{redirect:'manual'});
+const login=await fetch(root+'/api/session',{method:'POST',headers:{'Content-Type':'application/json',Origin:root},body:JSON.stringify({username:process.env.ACESSIBILIZE_TEST_USER,password:process.env.ACESSIBILIZE_TEST_PASSWORD})});
 const cookie=login.headers.getSetCookie().map(c=>c.split(';')[0]).join('; ');
 const headers={'Content-Type':'application/json',Origin:root,Cookie:cookie};
 async function post(type,data,expected=201){const response=await fetch(root+'/api/community',{method:'POST',headers,body:JSON.stringify({type,data})});const json=await response.json();assert.equal(response.status,expected,JSON.stringify(json));return json;}

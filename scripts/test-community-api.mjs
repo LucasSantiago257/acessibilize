@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const root=process.argv[2]||'http://127.0.0.1:5173';
 if(!['127.0.0.1','localhost'].includes(new URL(root).hostname))throw Error('Este teste grava somente no banco local.');
 const url=root+'/api/community';
-const login=await fetch(root+'/signin-with-chatgpt?return_to=%2F',{redirect:'manual'});
+const login=await fetch(root+'/api/session',{method:'POST',headers:{'Content-Type':'application/json',Origin:root},body:JSON.stringify({username:process.env.ACESSIBILIZE_TEST_USER,password:process.env.ACESSIBILIZE_TEST_PASSWORD})});
 const cookie=login.headers.getSetCookie().map(c=>c.split(';')[0]).join('; ');
 assert(cookie,'O teste requer a prévia dev com autenticação simulada.');
 const id=crypto.randomUUID();

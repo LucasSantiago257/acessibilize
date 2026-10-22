@@ -9,31 +9,31 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-  <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="community.css"><link rel="stylesheet" href="ratings.css"><link rel="stylesheet" href="layout.css">
+  <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="community.css"><link rel="stylesheet" href="ratings.css"><link rel="stylesheet" href="layout.css"><link rel="stylesheet" href="interface.css">
 </head>
 <body>
   <a class="skip" href="#results">Pular para os locais</a>
   <header class="header">
-    <a class="brand" href="./" aria-label="Acessibilize, início"><span class="brand-icon" data-icon="compass"></span><span>Acessibili<span class="brand-light">ze</span><small>A CIDADE É DE TODO MUNDO</small></span></a>
+    <div class="brand-controls"><button id="sidebarToggle" class="icon-button" type="button" aria-controls="sidebarPanel" aria-expanded="true" aria-label="Recolher menu lateral"></button><a class="brand" href="./" aria-label="Acessibilize, início"><span class="brand-icon" data-icon="compass"></span><span>Acessibili<span class="brand-light">ze</span><small>A CIDADE É DE TODO MUNDO</small></span></a></div>
     <nav aria-label="Navegação principal"><button class="nav-link active" id="exploreNav">Explorar o mapa</button><button class="nav-link" id="aboutNav">Sobre o projeto</button></nav>
-    <div class="header-actions"><button class="icon-button" id="accessibilityBtn" aria-label="Opções de leitura" title="Opções de leitura"><span data-icon="accessibility"></span></button><button class="primary" id="addBtn"><span data-icon="plus"></span>Adicionar local</button></div>
+    <div class="header-actions"><button id="loginBtn" class="secondary account-button" type="button" aria-label="Entrar">Entrar</button><button class="icon-button" id="accessibilityBtn" aria-label="Opções de leitura" title="Opções de leitura"><span data-icon="accessibility"></span></button><button class="primary" id="addBtn"><span data-icon="plus"></span>Adicionar local</button></div>
   </header>
   <main class="workspace">
-    <aside class="sidebar" aria-label="Busca e locais">
+    <aside id="sidebarPanel" class="sidebar" aria-label="Busca e locais">
       <div class="intro"><span class="eyebrow"><i></i> MAIS AUTONOMIA, NOVOS CAMINHOS</span><h1>A cidade também<br> é <span>seu lugar.</span></h1><p>Encontre espaços acessíveis para você.<br> Explore, descubra e compartilhe.</p></div>
       <div class="search-wrap"><span data-icon="search"></span><input id="search" type="search" placeholder="Busque um lugar ou bairro" aria-label="Buscar por nome ou bairro"><kbd>/</kbd></div>
       <div class="location-row"><span data-icon="pin"></span><span>Salvador, BA</span><span class="demo-label" id="baseCount">Base OpenStreetMap</span></div>
       <section class="filters" aria-label="Filtros de acessibilidade"><div class="section-heading"><h2>O que faz a diferença para você?</h2><button id="clearFilters" class="text-button">Limpar</button></div><div class="profile-filters"><button class="profile" data-profile="physical" aria-pressed="false"><span data-icon="wheelchair"></span>Física</button><button class="profile" data-profile="visual" aria-pressed="false"><span data-icon="eye"></span>Visual</button><button class="profile" data-profile="hearing" aria-pressed="false"><span data-icon="ear"></span>Auditiva</button></div><p class="filter-hint">Combine os filtros conforme suas necessidades.</p><label class="category-label" for="category">Tipo de lugar</label><select id="category"><option value="">Todos os lugares</option><option>Cultura e lazer</option><option>Parques e praças</option><option>Compras</option><option>Serviços</option><option>Alimentação</option></select><label class="category-label" for="sourceFilter">Origem dos dados</label><select id="sourceFilter"><option value="osm">Todos os locais reais</option><option value="community">Locais da comunidade</option><option value="demo">Exemplos fictícios · apresentação</option><option value="local">Cadastros antigos neste dispositivo</option><option value="all">Todas as bases</option></select><p class="filter-hint" id="dataSummary"></p></section>
       <div id="communityStatus" class="community-status" role="status">Carregando contribuições…</div><div class="results-heading"><h2 id="resultCount" aria-live="polite">Locais para descobrir</h2><button class="icon-button" id="favoritesBtn" aria-pressed="false" aria-label="Mostrar apenas favoritos" title="Apenas favoritos"><span data-icon="heart"></span></button></div>
       <div id="results" class="results" tabindex="-1"></div>
-      <footer class="sidebar-footer"><span data-icon="heart"></span>Uma cidade melhor começa com cada um de nós.</footer>
+      <footer class="sidebar-footer"><div class="sidebar-tools"><button class="secondary" id="sidebarAddBtn" type="button"><span data-icon="plus"></span>Adicionar local</button><button class="secondary" id="sidebarReadingBtn" type="button"><span data-icon="accessibility"></span>Opções de leitura</button><button class="text-button" id="restoreNotices" type="button" hidden>Mostrar avisos do mapa</button></div><span data-icon="heart"></span>Uma cidade melhor começa com cada um de nós.</footer>
     </aside>
     <section class="map-section" aria-label="Mapa dos locais em Salvador">
       <div id="map" aria-label="Mapa interativo de Salvador"></div>
-      <div id="mapError" class="map-error" hidden>O mapa precisa de internet para carregar. Você pode continuar explorando os locais na lista.</div>
+      <div id="mapError" class="map-error" hidden>O mapa precisa de internet para carregar. Você pode continuar explorando os locais na lista.<button class="notice-close" type="button" id="closeMapError" aria-label="Fechar aviso de mapa indisponível"><span data-icon="close"></span></button></div>
       <div class="map-top"><div class="map-caption"><span class="live-dot"></span>Salvador, Bahia <span class="divider">|</span><span id="mapCount">Carregando locais</span></div><button class="map-button" id="locateBtn"><span data-icon="locate"></span><span>Minha localização</span></button></div>
-      <div class="map-intro"><div class="intro-symbol" data-icon="sparkles"></div><span>MENOS BARREIRAS. MAIS POSSIBILIDADES.</span><h2>Seu próximo destino<br>começa com confiança.</h2><p>Conheça os recursos de cada espaço<br>antes de sair de casa.</p><button id="howBtn">Como funciona <span data-icon="arrow"></span></button><div class="decorative-path" aria-hidden="true"><i></i><b data-icon="pin"></b><i></i></div></div>
-      <div class="map-bottom"><div class="legend"><strong>Acessibilidade</strong><span><i class="green"></i>Recursos disponíveis</span><span><i class="amber"></i>Recursos parciais</span><span><i class="gray"></i>Sem informação</span><span><i class="red"></i>Acesso não disponível</span></div><div class="demo-note"><span data-icon="info"></span>Base OSM + relatos da comunidade · confirme antes de visitar.</div></div>
+      <div class="map-intro" data-notice="welcome"><button type="button" class="notice-close" data-dismiss-notice aria-label="Fechar apresentação do mapa"><span data-icon="close"></span></button><div class="intro-symbol" data-icon="sparkles"></div><span>MENOS BARREIRAS. MAIS POSSIBILIDADES.</span><h2>Seu próximo destino<br>começa com confiança.</h2><p>Conheça os recursos de cada espaço<br>antes de sair de casa.</p><button id="howBtn">Como funciona <span data-icon="arrow"></span></button><div class="decorative-path" aria-hidden="true"><i></i><b data-icon="pin"></b><i></i></div></div>
+      <div class="map-bottom"><div class="legend"><strong>Acessibilidade</strong><span><i class="green"></i>Recursos disponíveis</span><span><i class="amber"></i>Recursos parciais</span><span><i class="gray"></i>Sem informação</span><span><i class="red"></i>Acesso não disponível</span></div><div class="demo-note" data-notice="source"><span data-icon="info"></span><span>Base OSM + relatos da comunidade · confirme antes de visitar.</span><button class="notice-close" type="button" data-dismiss-notice aria-label="Fechar aviso sobre os dados"><span data-icon="close"></span></button></div></div>
       <div class="mobile-toggle"><button id="toggleMap" class="primary"><span data-icon="map"></span>Ver mapa</button></div>
     </section>
   </main>
@@ -42,5 +42,5 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="places.js"></script>
-  <script src="app.js"></script><script src="ratings.js"></script><script src="community-summary.js"></script><script src="community.js"></script>
+  <script src="app.js"></script><script src="ratings.js"></script><script src="community-summary.js"></script><script src="interface.js"></script><script src="community.js"></script>
 </body></html>

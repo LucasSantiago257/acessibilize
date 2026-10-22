@@ -4,7 +4,7 @@
 
 O site já está publicado no Sites, com acesso privado. A interface está em `public/`, a API em `app/api/community/route.ts`, e as contribuições e notas ficam no banco D1 vinculado à hospedagem. A base inicial do OpenStreetMap vem nos arquivos do projeto; os registros dos visitantes ficam no banco e exigem uma transferência separada.
 
-O projeto usa Vinext, Vite e Cloudflare Workers. Apesar de haver uma dependência de Next.js no starter, ele não usa hoje o build padrão do Next.js para Vercel. O login atual depende da identidade fornecida pela hospedagem Sites.
+O projeto usa Vinext, Vite e Cloudflare Workers. Apesar de haver uma dependência de Next.js no starter, ele não usa hoje o build padrão do Next.js para Vercel. O aplicativo possui login próprio com usuário e senha e sessões no D1; o acesso privado do Sites é um controle adicional da hospedagem.
 
 ## Caminhos possíveis
 
@@ -19,13 +19,13 @@ O projeto usa Vinext, Vite e Cloudflare Workers. Apesar de haver uma dependênci
 
 1. Definir a plataforma e conectar uma conta de propriedade do grupo.
 2. Definir o login dos colaboradores, por exemplo e-mail ou Google através de um provedor de autenticação. A leitura pública e a exigência de login para contribuir devem ser configuradas separadamente.
-3. Substituir a identificação específica do Sites pela validação real da sessão no servidor. Fora do Sites, o backend não pode confiar em um cabeçalho `oai-authenticated-user-id` enviado pelo visitante.
-4. Criar o banco de produção e aplicar as duas migrações existentes, mantendo as três notas opcionais e o histórico de visitas.
+3. Preservar a validação das sessões do aplicativo no servidor. As contribuições já usam essa sessão, sem confiar em cabeçalhos de identidade enviados pelo visitante. Caso a plataforma mude, revisar também os controles do starter e o acesso à página.
+4. Criar o banco de produção e aplicar as três migrações existentes, mantendo as três notas opcionais, o histórico de visitas e as tabelas de usuários e sessões.
 5. Exportar as contribuições da hospedagem atual e importá-las no novo banco. A base inicial de 761 locais continua nos arquivos.
 6. Fazer um deploy de prévia e verificar login, publicação, persistência entre contas, médias, notas ausentes e reenvios sem duplicação.
 7. Configurar o domínio e publicar a versão de produção após a verificação.
 
-O código ainda depende do banco e da autenticação do Sites; enviar apenas `public/` para uma hospedagem estática publica a interface, mas não os registros compartilhados. O trabalho de migração deve manter o login e os dados funcionando junto com a interface.
+O código ainda depende do binding D1 e da configuração de hospedagem; enviar apenas `public/` para uma hospedagem estática publica a interface, mas não o login nem os registros compartilhados. O trabalho de migração deve manter o login e os dados funcionando junto com a interface.
 
 ## Referências oficiais consultadas
 

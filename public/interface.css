@@ -1,0 +1,54 @@
+/* Controles da apresentação, conta mock e painel lateral. */
+.brand-controls { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.brand-controls > button { flex: 0 0 36px; }
+.header-actions { gap: 12px; }
+.account-button { min-height: 42px; max-width: 155px; font-size: 12px; padding: 10px 12px; }
+.account-button svg { flex-shrink: 0; width: 17px; height: 17px; }
+.account-button span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar[hidden], [data-notice][hidden], #restoreNotices[hidden] { display: none !important; }
+.sidebar-tools { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.sidebar-tools .secondary { justify-content: center; font-size: 11px; }
+#sidebarReadingBtn { display: none; }
+.workspace { grid-template-columns: minmax(0, 411px) minmax(0, 1fr); }
+.sidebar-collapsed .workspace { grid-template-columns: minmax(0, 1fr); }
+.notice-close { display: inline-grid; place-items: center; width: 30px; min-width: 30px; height: 30px; padding: 0; border-radius: 6px; color: var(--muted); }
+.notice-close:hover { background: #e6eddf; color: var(--ink); }
+.notice-close svg { width: 15px; height: 15px; }
+.map-intro > .notice-close { position: absolute; top: 10px; right: 10px; padding: 0; display: grid; }
+.map-intro > span { display: block; padding-right: 12px; }
+.demo-note { display: inline-flex; gap: 7px; align-items: center; padding: 5px 6px 5px 11px; }
+.demo-note > span:first-child { flex-shrink: 0; }
+.demo-note > span:first-child svg { margin: 0; }
+.demo-note > .notice-close { margin-left: 4px; flex-shrink: 0; }
+.map-error { padding-right: 50px; }
+.map-error > .notice-close { position: absolute; top: 7px; right: 7px; }
+.toast { display: flex; gap: 14px; align-items: center; padding: 10px 12px 10px 18px; pointer-events: none; }
+.toast.visible { pointer-events: auto; }
+.toast > span { overflow-wrap: anywhere; }
+.toast-close { flex-shrink: 0; width: 30px; height: 30px; color: white; border-radius: 5px; }
+.toast-close:hover { background: #ffffff20; }
+.toast-close svg { width: 16px; height: 16px; }
+.login-form { display: flex; flex-direction: column; gap: 18px; margin-top: 22px; }
+.login-form input { font-size: 14px; min-height: 46px; }
+.login-form .primary { align-self: stretch; }
+@media (min-width: 1600px) { .workspace { grid-template-columns: minmax(0, 445px) minmax(0, 1fr); } }
+@media (max-width: 1100px) { .workspace { grid-template-columns: minmax(0, 365px) minmax(0, 1fr); } }
+@media (max-width: 1050px) { .header nav { display: none; } }
+@media (max-width: 760px) {
+  .header { padding: 0 12px; gap: 8px; }
+  .brand-controls { gap: 7px; }
+  .brand-controls > button { flex-basis: 32px; width: 32px; }
+  .brand { font-size: 20px; gap: 8px; }
+  .brand-icon { width: 31px; height: 34px; }
+  .brand-icon svg { width: 23px; height: 23px; }
+  .brand small { font-size: 5px; letter-spacing: 1px; }
+  .header-actions { gap: 4px; }
+  .account-button { width: 36px; height: 38px; min-height: 38px; padding: 8px; justify-content: center; }
+  .account-button span { display: none; }
+  .workspace { display: block; }
+  .sidebar-collapsed .workspace { display: block; }
+}
+@media (max-width: 600px) {
+  .header-actions #accessibilityBtn { display: none; }
+  #sidebarReadingBtn { display: inline-flex; }
+}

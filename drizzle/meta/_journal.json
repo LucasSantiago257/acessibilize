@@ -15,6 +15,13 @@
       "when": 1792503437714,
       "tag": "0001_clear_roughhouse",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1792663664577,
+      "tag": "0002_thin_diamondback",
+      "breakpoints": true
     }
   ]
 }

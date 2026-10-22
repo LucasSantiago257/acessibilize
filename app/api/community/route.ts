@@ -1,6 +1,7 @@
 import { env } from 'cloudflare:workers';
 import baseIds from '../../../data/base-ids.json';
 import { placeSchema, reportSchema } from '../../../lib/community-validation';
+import { getSession } from '../../../lib/session';
 
 export const dynamic = 'force-dynamic';
 const knownPlaces = new Set(baseIds);
@@ -9,14 +10,15 @@ const json = (value: unknown, status = 200) => new Response(JSON.stringify(value
 
 export async function GET(request: Request) {
   try {
-    const userId = request.headers.get('oai-authenticated-user-id');
+    const session = await getSession(request);
     const [places, reports, ratings] = await env.DB!.batch<Record<string, unknown>>([
       env.DB!.prepare('SELECT id, name, category, area, address, latitude, longitude, created_at FROM community_places ORDER BY created_at DESC'),
       env.DB!.prepare('SELECT id, place_id, author_name, visited_at, created_at, features, observation, physical_rating, visual_rating, hearing_rating FROM accessibility_reports ORDER BY visited_at DESC, created_at DESC, id DESC'),
       env.DB!.prepare('SELECT place_id, AVG(physical_rating) AS physical_average, COUNT(physical_rating) AS physical_count, AVG(visual_rating) AS visual_average, COUNT(visual_rating) AS visual_count, AVG(hearing_rating) AS hearing_average, COUNT(hearing_rating) AS hearing_count FROM accessibility_reports GROUP BY place_id'),
     ]);
     return json({
-      signedIn: Boolean(userId),
+      signedIn: Boolean(session),
+      user: session ? { name: session.name, username: session.username } : null,
       places: places.results.map((p: Record<string, unknown>) => ({ id: p.id, name: p.name, category: p.category, area: p.area, address: p.address, lat: p.latitude, lng: p.longitude, createdAt: p.created_at, source: 'community', physical: 0, visual: 0, hearing: 0, resources: { physical: [], visual: [], hearing: [] }, art: ({ 'Cultura e lazer': 'culture', 'Parques e praças': 'park', Compras: 'shopping', Serviços: 'service', Alimentação: 'food' } as Record<string, string>)[String(p.category)] })),
       reports: reports.results.map((r: Record<string, unknown>) => ({ id: r.id, placeId: r.place_id, authorName: r.author_name, visitedAt: r.visited_at, createdAt: r.created_at, features: JSON.parse(String(r.features)), observation: r.observation, ratings: { physical: r.physical_rating, visual: r.visual_rating, hearing: r.hearing_rating } })),
       ratingsByPlace: Object.fromEntries(ratings.results.map(r => [r.place_id, Object.fromEntries(['physical', 'visual', 'hearing'].map(k => [k, { average: r[k + '_average'], count: r[k + '_count'] }]))])),
@@ -28,8 +30,10 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const authorId = request.headers.get('oai-authenticated-user-id');
-  if (!authorId) return json({ error: 'Entre com sua conta para publicar uma contribuição.' }, 401);
+  let session;
+  try { session = await getSession(request); } catch { return json({ error: 'Não foi possível verificar sua sessão. Tente novamente.' }, 503); }
+  if (!session) return json({ error: 'Faça login para cadastrar ou avaliar.' }, 401);
+  const authorId = session.userId;
   if (request.headers.get('origin') !== new URL(request.url).origin || request.headers.get('sec-fetch-site') === 'cross-site') return json({ error: 'Origem da requisição não permitida.' }, 403);
   if (!request.headers.get('content-type')?.startsWith('application/json')) return json({ error: 'Formato não permitido.' }, 415);
   if (Number(request.headers.get('content-length') || 0) > 20000) return json({ error: 'Contribuição muito extensa.' }, 413);
